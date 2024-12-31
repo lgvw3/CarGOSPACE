@@ -1,0 +1,98 @@
+# Unity generated folders
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Asset Store Tools
+/[Aa]ssets/AssetStoreTools*
+
+# Plugins and IDE-specific settings
+/[Aa]ssets/Plugins/Editor/JetBrains*
+.vs/
+.idea/
+.Rider/
+
+# Gradle cache
+.gradle/
+
+# Visual Studio/MonoDevelop/Consulo auto-generated files
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity meta files and crash reports
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+
+# Builds and packaged files
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# Crashlytics
+crashlytics-build.properties
+
+# Addressables
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# Temporary Android assets
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Auto-generated materials
+[Aa]ssets/**/*.mat
+
+# macOS
+._* 
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+.directory
+
+# Miscellaneous
+.DS_Store
+.vscode
+.plastic
+ignore.conf
+UIElementsSchema
+results/
+
+# Unity Package Manager
+Packages/packages-lock.json
+
+# Logs
+*.log
+
+# Crash Reports
+crash-reports/
+
+# YAML Merge settings
+*.mergeoptions
