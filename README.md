@@ -11,3 +11,11 @@ Also including distance to target, if I can figure out how to make it more compl
 ## Current State 31st Dec, 2024
 
 I have it making some decent progress towards the target going from A to B. After 100,000+ ish steps is falls apart.
+
+### Later the same day
+
+Changed a few things, like the end tile being seen as road, the sensors seeing what percentage of their vision is road, a sensor mimicking steering wheel input I think, and a sensor for normalized distance to target. 
+
+I got tensorboard set up and have been learning how to read it, and that helped. At first I thought the learning rate may be too high, but as it turns out I just needed to let it train more. So I trained in increments of 50,000. Figured out how to train in the background with multi environments so it goes faster as well.
+
+At Around 200,000 steps the model is performing in a way I think we could introduce the next steps and have some fun with it. That and I just kinda want to.
