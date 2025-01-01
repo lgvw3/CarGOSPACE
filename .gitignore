@@ -96,3 +96,5 @@ crash-reports/
 
 # YAML Merge settings
 *.mergeoptions
+
+models/
