@@ -32,14 +32,8 @@ public class AICar : Agent
             sensor.AddObservation(proportion);
         }
         // Observations for the environment
-        float distanceToTarget = Vector2.Distance(transform.position, target.position);
-        sensor.AddObservation(distanceToTarget);
-        // sensor.AddObservation(cellCarIsIn.x - tilemap.cellBounds..x); // how close to wall
-        // sensor.AddObservation(transform.position.y - tilemap.cellBounds.y);
-        // sensor.AddObservation(transform.position.z - tilemap.cellBounds.z);
-        // sensor.AddObservation(transform.rotation.z / 360f); // Car's rotation
-        // sensor.AddObservation(speed);
-        // sensor.AddObservation((target.position - transform.position).normalized); // Direction to target
+        sensor.AddObservation(transform.rotation.z / 360f); // Car's rotation, steering wheel input simulation
+        sensor.AddObservation((target.position - transform.position).normalized); // Direction to target
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -99,11 +93,31 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
-        // Reset car position to start point
-        transform.position = new Vector3(0.001f, -0.482f, 0); // Or wherever your start point is
-        transform.rotation = new Quaternion(0, 0, -90, 90);
+        // Define a small range for position and rotation randomness
+        float positionRange = 0.01f; // Adjust as needed
+        float rotationRange = 1f; // Degrees for rotation randomness
+
+        // Base start position and rotation
+        Vector3 basePosition = new Vector3(0.001f, -0.482f, 0);
+        Quaternion baseRotation = new Quaternion(0, 0, -90, 90);
+
+        // Randomize position slightly
+        float xOffset = Random.Range(-positionRange, positionRange);
+        float yOffset = Random.Range(-positionRange, positionRange);
+        transform.position = basePosition + new Vector3(xOffset, yOffset, 0);
+
+        // Randomize rotation slightly
+        float rotationOffset = Random.Range(-rotationRange, rotationRange);
+        transform.rotation = baseRotation * Quaternion.Euler(0, 0, rotationOffset);
+
+        // Reset other parameters
         rb.linearVelocity = Vector2.zero;
         lastPosition = transform.position;
-        lastDistance = Vector2.Distance(transform.position, target.position);
+        // // Reset car position to start point
+        // transform.position = new Vector3(0.001f, -0.482f, 0); // Or wherever your start point is
+        // transform.rotation = new Quaternion(0, 0, -90, 90);
+        // rb.linearVelocity = Vector2.zero;
+        // lastPosition = transform.position;
+        // lastDistance = Vector2.Distance(transform.position, target.position);
     }
 }

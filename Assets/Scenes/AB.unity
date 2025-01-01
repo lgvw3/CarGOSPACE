@@ -216,7 +216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 381444623}
   - component: {fileID: 381444622}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -802,14 +802,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 11
+    VectorObservationSize: 14
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
-      BranchSizes: 01000000
-    VectorActionSize: 
+      BranchSizes: 
+    VectorActionSize: 02000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 0
+    VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
