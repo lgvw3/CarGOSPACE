@@ -806,7 +806,7 @@ MonoBehaviour:
   target: {fileID: 381444623}
   trackLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   cameraSensor: {fileID: 965397967}
 --- !u!114 &965397964
 MonoBehaviour:

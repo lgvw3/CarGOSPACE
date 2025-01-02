@@ -27,3 +27,7 @@ Attempting to add the next phase or level of learning for the car. I'm going to 
 ### Later
 
 Took a while to get things figured out, went back and made the check if the car was on track based on 2d colliders instead of tile cells.
+
+## 2nd Jan, 2025 a little after midnight
+
+The curves track as being pretty well mastered by the little car as I watch it visually. Looking forward to some more advanced challenges for it in the days to come. That'll be my near term focus of getting a decent progression through curriculum until it can do like a little city or mini highway kind of thing. Then, with a decent foundation like that, I want to pull out the mlagents function and write the training code myself.

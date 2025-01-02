@@ -352,7 +352,7 @@ GameObject:
   - component: {fileID: 1197979886}
   - component: {fileID: 1197979885}
   - component: {fileID: 1197979884}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,7 +428,7 @@ MonoBehaviour:
   target: {fileID: 1981939271}
   trackLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   cameraSensor: {fileID: 1197979888}
 --- !u!114 &1197979887
 MonoBehaviour:
@@ -618,7 +618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1264391640}
   - component: {fileID: 1264391641}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: front camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
