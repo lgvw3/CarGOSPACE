@@ -23,3 +23,7 @@ At Around 200,000 steps the model is performing in a way I think we could introd
 ## 1st Jan, 2025! Happy New Year!
 
 Attempting to add the next phase or level of learning for the car. I'm going to attempt curriculum learning.
+
+### Later
+
+Took a while to get things figured out, went back and made the check if the car was on track based on 2d colliders instead of tile cells.

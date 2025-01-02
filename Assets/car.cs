@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SimpleCar : MonoBehaviour
 {
@@ -6,10 +7,20 @@ public class SimpleCar : MonoBehaviour
     public float turnSpeed = 5f; // How fast the car can turn
     private Rigidbody2D rb; // Reference to the Rigidbody2D component
 
+    private Tilemap tilemap;
+    [SerializeField] private LayerMask trackLayer; // Assign this in inspector to your track's layer
+
+
     void Start()
     {
         // Get the Rigidbody2D component attached to this GameObject
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    void OnDrawGizmos() 
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 0.1f);
     }
 
     void Update()
@@ -18,25 +29,23 @@ public class SimpleCar : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        if (moveHorizontal != 0) 
-        {
-            // Rotate the car
-            float angle = -moveHorizontal * turnSpeed * Time.deltaTime;
-            transform.Rotate(0, 0, angle);
+        // Move the car based on input
+        Vector2 movement = transform.up * moveVertical * speed * Time.deltaTime;
+        rb.MovePosition(rb.position + movement);
 
-            // If rotating apply turn radius
-            Vector2 turnRadiusMotion = transform.right * moveHorizontal * Time.deltaTime;
-            //rb.MovePosition(rb.position + turnRadiusMotion);
+         // Turning
+        float angle = -moveHorizontal * turnSpeed * Time.deltaTime;
+        transform.Rotate(0, 0, angle);
 
-            // Move the car based on input
-            Vector2 movement = transform.up * moveVertical * speed * Time.deltaTime;
-            rb.MovePosition(rb.position + movement + turnRadiusMotion);
+        if (tilemap == null) {
+            tilemap = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
         }
-        else 
+        Collider2D trackCollider = Physics2D.OverlapCircle(transform.position, 0.1f, trackLayer);
+        
+        if (trackCollider != null)
         {
-            // Move the car based on input
-            Vector2 movement = transform.up * moveVertical * speed * Time.deltaTime;
-            rb.MovePosition(rb.position + movement);
+            Debug.Log("Crash");
+            rb.position = new Vector3(0.001f, -0.482f, 0);
         }
     }
 }

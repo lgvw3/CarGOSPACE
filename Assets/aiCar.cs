@@ -3,6 +3,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class AICar : Agent
 {
@@ -11,12 +12,19 @@ public class AICar : Agent
     private Rigidbody2D rb;
     public Transform target;
     private Tilemap tilemap;
+    public LayerMask trackLayer; // Assign this in inspector to your track's layer
     
     public CameraSensor cameraSensor;
 
     private float lastDistance = 0f;
     private Vector3 lastPosition;
 
+    private static int totalNumberOfStepsTaken = 0;
+
+    public int GetTotalStepsAcrossEpisodes()
+    {
+        return totalNumberOfStepsTaken;
+    }
 
     public override void Initialize()
     {
@@ -38,6 +46,7 @@ public class AICar : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        totalNumberOfStepsTaken++;
         // Actions: 0 for steering, 1 for acceleration
         float steer = actions.ContinuousActions[0];
         float accel = Mathf.Clamp(actions.ContinuousActions[1], 0f, 1f);
@@ -49,16 +58,11 @@ public class AICar : Agent
         // Reward System
         float distanceToTarget = Vector2.Distance(transform.position, target.position);
         AddReward(-0.001f); // Small penalty for each step to encourage efficiency
-        if (tilemap == null) {
-            tilemap = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
-        }
-        Vector3Int gridPosition = tilemap.WorldToCell(transform.position);
         if (distanceToTarget < 1f) // If close to the target
         {
             AddReward(1.0f);
             Debug.Log("Successful Completion");
             EndEpisode(); // End the episode
-            return;
         }
         else if (distanceToTarget < lastDistance)
         {
@@ -66,29 +70,17 @@ public class AICar : Agent
             AddReward(.01f);
         }
         lastDistance = distanceToTarget;
-        if (!tilemap.cellBounds.Contains(gridPosition) || tilemap.GetTile(gridPosition) == null)
+        
+        if (tilemap == null) {
+            tilemap = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
+        }
+        Collider2D trackCollider = Physics2D.OverlapCircle(transform.position, 0.1f, trackLayer);
+        if (trackCollider != null)
         {
             Debug.Log("Crash");
             AddReward(-1.0f); // Penalize going out of bounds
             EndEpisode();
         }
-        // else if (steer > .2 || steer < -.2) // attempting smoothness
-        // {
-        //     AddReward(-.001f);
-        // }
-        // if (accel != 0) // bias towards action
-        // {
-        //     AddReward(.0005f);
-        // }
-        // float currentDistance = Vector3.Distance(transform.position, lastPosition);
-        // float distanceDelta = currentDistance - lastDistance;
-        
-        // if (distanceDelta > 0) // Only reward forward movement
-        // {
-        //     float distanceReward = distanceDelta * .001f;
-        //     AddReward(distanceReward);
-        // }
-
     }
 
     public override void OnEpisodeBegin()
@@ -96,7 +88,6 @@ public class AICar : Agent
         // Define a small range for position and rotation randomness
         float positionRange = 0.01f; // Adjust as needed
         float rotationRange = 1f; // Degrees for rotation randomness
-
         // Base start position and rotation
         Vector3 basePosition = new Vector3(0.001f, -0.482f, 0);
         Quaternion baseRotation = new Quaternion(0, 0, -90, 90);
@@ -113,11 +104,5 @@ public class AICar : Agent
         // Reset other parameters
         rb.linearVelocity = Vector2.zero;
         lastPosition = transform.position;
-        // // Reset car position to start point
-        // transform.position = new Vector3(0.001f, -0.482f, 0); // Or wherever your start point is
-        // transform.rotation = new Quaternion(0, 0, -90, 90);
-        // rb.linearVelocity = Vector2.zero;
-        // lastPosition = transform.position;
-        // lastDistance = Vector2.Distance(transform.position, target.position);
     }
 }
