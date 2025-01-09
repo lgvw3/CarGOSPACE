@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Curves.unity
     guid: 70a87d5e4262e44c1a4498805ea24189
+  - enabled: 1
+    path: Assets/Scenes/90 Degree.unity
+    guid: 53637d300e3c040649703c2e68010038
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

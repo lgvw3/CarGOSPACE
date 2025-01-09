@@ -85,6 +85,9 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
+        // if (SceneManager.GetActiveScene().name == "90 Degree") {
+        //     EndAdjuster.Instance.OnEpisodeBegin();
+        // }
         // Define a small range for position and rotation randomness
         float positionRange = 0.01f; // Adjust as needed
         float rotationRange = 1f; // Degrees for rotation randomness

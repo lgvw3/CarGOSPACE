@@ -28,6 +28,14 @@ Attempting to add the next phase or level of learning for the car. I'm going to 
 
 Took a while to get things figured out, went back and made the check if the car was on track based on 2d colliders instead of tile cells.
 
+Starting to see the value of tensorboard! It is sweet!
+
 ## 2nd Jan, 2025 a little after midnight
 
-The curves track as being pretty well mastered by the little car as I watch it visually. Looking forward to some more advanced challenges for it in the days to come. That'll be my near term focus of getting a decent progression through curriculum until it can do like a little city or mini highway kind of thing. Then, with a decent foundation like that, I want to pull out the mlagents function and write the training code myself.
+The curves track is being pretty well mastered by the little car as I watch it visually. Looking forward to some more advanced challenges for it in the days to come. That'll be my near term focus of getting a decent progression through curriculum until it can do like a little city or mini highway kind of thing. Then, with a decent foundation like that, I want to pull out the mlagents function and write the training code myself.
+
+## 8 and 9th Jan, 2025
+
+Working on the third scene. For now just seeing how we do with one 90 degree turn. The challenge I see is that I need to be able to go either direction and have some sensible reason for going there. My thought is I can randomly move the end point of the third scene and give as input something like "right" or "left" to the agent matching where the destination is for it to learn this.
+
+Moving forward though, I'll need some sort of navigation input. I'm thinking their has got to be a decent way of doing like A* and giving the next step as input and rewarding the car for being on track? Or, maybe it's saying what the next node should be and rewarding for getting closer to that?

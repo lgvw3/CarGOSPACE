@@ -7,6 +7,7 @@ public class SceneTransition : MonoBehaviour
 {
     public string nextSceneName = "Curves"; // Name of the next scene
     public float performanceThreshold = 2f; // Threshold for performance to trigger scene change
+    public int minimumSteps = 50000;
     public AICar agent;
 
     public void Awake()
@@ -38,7 +39,7 @@ public class SceneTransition : MonoBehaviour
     {
         // Check if the agent has met the performance threshold in Scene 1
         Debug.Log("Cumulative Reward: " + agent.GetCumulativeReward().ToString() + ". Step count: " + agent.GetTotalStepsAcrossEpisodes());
-        if (agent.GetCumulativeReward() >= performanceThreshold && agent.GetTotalStepsAcrossEpisodes() > 50000)
+        if (agent.GetCumulativeReward() >= performanceThreshold && agent.GetTotalStepsAcrossEpisodes() > minimumSteps)
         {
             Debug.Log("Threshold reached! Transitioning to next scene...");
             TransitionToNextScene();
