@@ -4,7 +4,7 @@ using UnityEngine;
 public class DynamicGraphGenerator2D : MonoBehaviour
 {
     public LayerMask roadMask;       // Layer for the road
-    public float scanRadius = 5f;   // Scan radius around the agent
+    public float scanRadius = 2f;   // Scan radius around the agent
     public float nodeSpacing = 2f;   // Distance between nodes
     public float edgeConnectionDistance = 3f;  // Max distance to connect nodes
 
@@ -20,24 +20,42 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     // Generate nodes dynamically along the track
     void GenerateGraph()
     {
+        graphNodes.Clear();  // Clear existing nodes
+
         Collider2D[] roadSegments = Physics2D.OverlapCircleAll(transform.position, scanRadius, roadMask);
 
         foreach (var segment in roadSegments)
         {
-            Vector2 startPos = segment.bounds.min;
-            Vector2 endPos = segment.bounds.max;
-            float distance = Vector2.Distance(startPos, endPos);
-            int numNodes = Mathf.CeilToInt(distance / nodeSpacing);
+            // Confirm detection
+            Debug.Log($"Detected road segment: {segment.gameObject.name}");
 
-            for (int i = 0; i <= numNodes; i++)
+            Bounds bounds = segment.bounds;
+            float width = bounds.size.x;
+            float height = bounds.size.y;
+
+            int horizontalDivisions = Mathf.CeilToInt(width / nodeSpacing);
+            int verticalDivisions = Mathf.CeilToInt(height / nodeSpacing);
+
+            for (int i = 0; i <= horizontalDivisions; i++)
             {
-                Vector2 point = Vector2.Lerp(startPos, endPos, (float)i / numNodes);
-                AddNode(point);
+                for (int j = 0; j <= verticalDivisions; j++)
+                {
+                    float x = bounds.min.x + (i * (width / horizontalDivisions));
+                    float y = bounds.min.y + (j * (height / verticalDivisions));
+                    Vector2 point = new Vector2(x, y);
+
+                    // Use OverlapPoint instead of OverlapPoint on segment
+                    if (Physics2D.OverlapPoint(point, roadMask))
+                    {
+                        AddNode(point);
+                    }
+                }
             }
         }
 
-        Debug.Log($"Generated {graphNodes.Count} dynamic nodes.");
+        Debug.Log($"Generated {graphNodes.Count} nodes.");
     }
+
 
     void AddNode(Vector2 point)
     {
@@ -49,19 +67,24 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     // Connect nearby nodes with edges
     void ConnectNodes()
+{
+    graphEdges.Clear();  // Clear existing edges
+
+    for (int i = 0; i < graphNodes.Count; i++)
     {
-        for (int i = 0; i < graphNodes.Count; i++)
+        for (int j = i + 1; j < graphNodes.Count; j++)
         {
-            for (int j = i + 1; j < graphNodes.Count; j++)
+            float distance = Vector2.Distance(graphNodes[i], graphNodes[j]);
+
+            // Connect nodes that are close enough (avoids cross-connecting far nodes)
+            if (distance <= edgeConnectionDistance)
             {
-                float distance = Vector2.Distance(graphNodes[i], graphNodes[j]);
-                if (distance <= edgeConnectionDistance)
-                {
-                    graphEdges.Add((graphNodes[i], graphNodes[j]));
-                }
+                graphEdges.Add((graphNodes[i], graphNodes[j]));
             }
         }
     }
+}
+
 
     // Draw Gizmos for debugging
     void OnDrawGizmos()

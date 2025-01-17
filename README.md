@@ -39,3 +39,9 @@ The curves track is being pretty well mastered by the little car as I watch it v
 Working on the third scene. For now just seeing how we do with one 90 degree turn. The challenge I see is that I need to be able to go either direction and have some sensible reason for going there. My thought is I can randomly move the end point of the third scene and give as input something like "right" or "left" to the agent matching where the destination is for it to learn this.
 
 Moving forward though, I'll need some sort of navigation input. I'm thinking their has got to be a decent way of doing like A* and giving the next step as input and rewarding the car for being on track? Or, maybe it's saying what the next node should be and rewarding for getting closer to that?
+
+## 16th and 17th of Jan
+
+The right or left idea seems to be okay, and I'm working on nav input. Getting weird results with the gizmo to help with debugging so my understanding of overlapcircleall works and .lerp are not as good as I'd like. This may not be the way. I'm trying to find a way that emulates how a nav system would determine that data so that I can hand that back to the agent in a meaningful sensor way.
+
+If I use this updated script and make the composite operation "none" rather than "merge" I get closer to some userful concept. The problem is then the car always thinks it is crashing haha so maybe we can use "none" and figure out how to get the car to drive on it still, since I think the collider stuff seems to "smooth" out to much on merge. When it's set to merge the most I get is a few nodes at the far end of the track right now.
