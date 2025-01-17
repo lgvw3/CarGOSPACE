@@ -16,15 +16,17 @@ public class EndAdjuster : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    public void OnEpisodeBegin()
+    public int OnEpisodeBegin()
     {
         int episodeNumber = agent.CompletedEpisodes; // Custom method in Agent
         float cumulativeReward = agent.GetCumulativeReward();
 
-        // Example logic: Adjust target placement only after 10 episodes
+        int direction = 1; // 1 = left 0 = right
+        // Wait to change until we have learned a little about turns
         if (episodeNumber >= 10 && cumulativeReward > 7f)
         {
-            Transform newTargetPosition = targetPositions[UnityEngine.Random.Range(0, targetPositions.Length)];
+            direction = UnityEngine.Random.Range(0, targetPositions.Length);
+            Transform newTargetPosition = targetPositions[direction];
             target.position = newTargetPosition.position;
         }
         else
@@ -32,5 +34,6 @@ public class EndAdjuster : MonoBehaviour
             // Default target placement for early episodes
             target.position = targetPositions[0].position;
         }
+        return direction;
     }
 }

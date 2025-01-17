@@ -21,6 +21,8 @@ public class AICar : Agent
 
     private static int totalNumberOfStepsTaken = 0;
 
+    private int direction = 1; // start by going left
+
     public int GetTotalStepsAcrossEpisodes()
     {
         return totalNumberOfStepsTaken;
@@ -42,6 +44,7 @@ public class AICar : Agent
         // Observations for the environment
         sensor.AddObservation(transform.rotation.z / 360f); // Car's rotation, steering wheel input simulation
         sensor.AddObservation((target.position - transform.position).normalized); // Direction to target
+        sensor.AddObservation(direction); // for the 90 degree test simulate giving nav directions
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -85,9 +88,9 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
-        // if (SceneManager.GetActiveScene().name == "90 Degree") {
-        //     EndAdjuster.Instance.OnEpisodeBegin();
-        // }
+        if (SceneManager.GetActiveScene().name == "90 Degree") {
+            direction = EndAdjuster.Instance.OnEpisodeBegin();
+        }
         // Define a small range for position and rotation randomness
         float positionRange = 0.01f; // Adjust as needed
         float rotationRange = 1f; // Degrees for rotation randomness

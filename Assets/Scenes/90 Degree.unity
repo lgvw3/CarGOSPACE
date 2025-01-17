@@ -840,6 +840,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextSceneName: Curves
   performanceThreshold: 2
+  minimumSteps: 50000
   agent: {fileID: 0}
 --- !u!4 &1310521165
 Transform:
@@ -1559,6 +1560,7 @@ GameObject:
   - component: {fileID: 1631789648}
   - component: {fileID: 1631789647}
   - component: {fileID: 1631789646}
+  - component: {fileID: 1631789655}
   m_Layer: 0
   m_Name: car
   m_TagString: Untagged
@@ -1634,7 +1636,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 14
+    VectorObservationSize: 15
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -1815,6 +1817,24 @@ Transform:
   - {fileID: 535580784}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -91.463}
+--- !u!114 &1631789655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631789645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4a905b08e0d4230864f11e943fc491, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadMask:
+    serializedVersion: 2
+    m_Bits: 8
+  scanRadius: 5
+  nodeSpacing: 3
+  edgeConnectionDistance: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
