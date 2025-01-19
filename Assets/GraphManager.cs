@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class DynamicGraphGenerator2D : MonoBehaviour
 {
     public LayerMask roadMask;       // Layer for the road
+    public Tilemap roadTiles;
     public float scanRadius = 2f;   // Scan radius around the agent
     public float nodeSpacing = 2f;   // Distance between nodes
     public float edgeConnectionDistance = 3f;  // Max distance to connect nodes
@@ -22,34 +24,24 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     {
         graphNodes.Clear();  // Clear existing nodes
 
-        Collider2D[] roadSegments = Physics2D.OverlapCircleAll(transform.position, scanRadius, roadMask);
+        if (roadTiles == null) {
+            roadTiles = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
+        }
+        BoundsInt bounds = roadTiles.cellBounds;
 
-        foreach (var segment in roadSegments)
+
+        for (int x = bounds.xMin; x <= bounds.xMax; x++)
         {
-            // Confirm detection
-            Debug.Log($"Detected road segment: {segment.gameObject.name}");
-
-            Bounds bounds = segment.bounds;
-            float width = bounds.size.x;
-            float height = bounds.size.y;
-
-            int horizontalDivisions = Mathf.CeilToInt(width / nodeSpacing);
-            int verticalDivisions = Mathf.CeilToInt(height / nodeSpacing);
-
-            for (int i = 0; i <= horizontalDivisions; i++)
+            for (int y = bounds.yMin; y <= bounds.yMax; y++)
             {
-                for (int j = 0; j <= verticalDivisions; j++)
-                {
-                    float x = bounds.min.x + (i * (width / horizontalDivisions));
-                    float y = bounds.min.y + (j * (height / verticalDivisions));
-                    Vector2 point = new Vector2(x, y);
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
 
-                    // Use OverlapPoint instead of OverlapPoint on segment
-                    if (Physics2D.OverlapPoint(point, roadMask))
-                    {
-                        AddNode(point);
-                    }
+                if (roadTiles.HasTile(cellPosition))
+                {
+                    Vector3 point = roadTiles.GetCellCenterWorld(cellPosition);
+                    AddNode(point);
                 }
+
             }
         }
 

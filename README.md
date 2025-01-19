@@ -45,3 +45,7 @@ Moving forward though, I'll need some sort of navigation input. I'm thinking the
 The right or left idea seems to be okay, and I'm working on nav input. Getting weird results with the gizmo to help with debugging so my understanding of overlapcircleall works and .lerp are not as good as I'd like. This may not be the way. I'm trying to find a way that emulates how a nav system would determine that data so that I can hand that back to the agent in a meaningful sensor way.
 
 If I use this updated script and make the composite operation "none" rather than "merge" I get closer to some userful concept. The problem is then the car always thinks it is crashing haha so maybe we can use "none" and figure out how to get the car to drive on it still, since I think the collider stuff seems to "smooth" out to much on merge. When it's set to merge the most I get is a few nodes at the far end of the track right now.
+
+## 18th of Jan
+
+I think this is a better basis for the navigation concept. Just looking at the tilemap and putting nodes in the center, which works when we don't have lanes or turn lanes so it'll get more complex, but I think this is a better starting point. I will have to figure out how to address the curved points and some better edge connection logic, but I like the direction this is heading.
