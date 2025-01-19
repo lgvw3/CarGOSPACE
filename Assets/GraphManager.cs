@@ -38,8 +38,26 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
                 if (roadTiles.HasTile(cellPosition))
                 {
+                    Tile tile = (Tile)roadTiles.GetTile(cellPosition);
                     Vector3 point = roadTiles.GetCellCenterWorld(cellPosition);
-                    AddNode(point);
+
+                    // I figure real world nav systems could use CV to determine something like this
+                    // so, rather than check with raycasts for every spot to see it's direction
+                    // I'll cut some computation down and just check when I know it isn't a straight shot
+                    if (tile.sprite.name == "Square")
+                    {
+                        Debug.Log("Square");
+                        AddNode(point);
+                    }
+                    else 
+                    {
+                        Debug.Log("Not Square");
+                        Bounds spriteBounds = tile.sprite.bounds;
+                        Vector3 offset = spriteBounds.center; // Sprite offset relative to the grid center
+                        Vector3 truePoint = point +  Vector3.Scale(offset, roadTiles.transform.localScale); // Adjust for tilemap scale
+                        AddNode(truePoint);
+                        PlaceNodesViaRaycasting(truePoint, 16);
+                    }
                 }
 
             }
@@ -57,25 +75,84 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         }
     }
 
+    void PlaceNodesViaRaycasting(Vector3 tileCenter, int numRays)
+    {
+        float maxRadius = 1f; // Adjust based on tile size
+        for (int i = 0; i < numRays; i++)
+        {
+            float angle = 2 * Mathf.PI * i / numRays;
+            Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
+            RaycastHit2D hit = Physics2D.Raycast(tileCenter, direction, maxRadius, roadMask);
+
+            //TODO: Closer but fix this and maybe follow the hit for proper curve?
+            if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
+            {
+                for (float distance = .1f; distance <= maxRadius; distance += .1f)
+                {
+                    Vector3 samplePoint = tileCenter + direction * distance;
+
+                    // Validate the sampled point
+                    if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
+                    {
+                        AddNode(samplePoint);
+                    }
+                }
+                //AddNode(hit.point);
+            }
+        }
+
+
+        /* float segmentAngle = 360 / (numRays - 1); // Adjust for the segments
+
+        for (int i = 0; i < numRays; i++)
+        {
+            float angle = -360 / 2 + i * segmentAngle;
+            Vector3 rayDirection = Quaternion.Euler(0, 0, angle) * tileCenter;
+            RaycastHit2D hit = Physics2D.Raycast(tileCenter, rayDirection, .1f, roadMask);
+            if (hit.collider != null) 
+            {
+                for (float distance = .1f; distance <= maxRadius; distance += .1f)
+                {
+                    Vector3 samplePoint = tileCenter + rayDirection * distance;
+
+                    // Validate the sampled point
+                    if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
+                    {
+                        AddNode(samplePoint);
+                    }
+                }
+            } */
+
+/*             if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
+            {
+                AddNode(hit.point);
+            } */
+        
+    }
+
+
+
     // Connect nearby nodes with edges
     void ConnectNodes()
-{
-    graphEdges.Clear();  // Clear existing edges
-
-    for (int i = 0; i < graphNodes.Count; i++)
     {
-        for (int j = i + 1; j < graphNodes.Count; j++)
-        {
-            float distance = Vector2.Distance(graphNodes[i], graphNodes[j]);
+        graphEdges.Clear();  // Clear existing edges
 
-            // Connect nodes that are close enough (avoids cross-connecting far nodes)
-            if (distance <= edgeConnectionDistance)
+        for (int i = 0; i < graphNodes.Count; i++)
+        {
+            for (int j = i + 1; j < graphNodes.Count; j++)
             {
-                graphEdges.Add((graphNodes[i], graphNodes[j]));
+                float distance = Vector2.Distance(graphNodes[i], graphNodes[j]);
+
+                // Connect nodes that are close enough (avoids cross-connecting far nodes)
+
+                // TODO: Need something like raycasting to confirm the whole edge is on road
+                if (distance <= edgeConnectionDistance)
+                {
+                    graphEdges.Add((graphNodes[i], graphNodes[j]));
+                }
             }
         }
     }
-}
 
 
     // Draw Gizmos for debugging

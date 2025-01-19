@@ -49,3 +49,9 @@ If I use this updated script and make the composite operation "none" rather than
 ## 18th of Jan
 
 I think this is a better basis for the navigation concept. Just looking at the tilemap and putting nodes in the center, which works when we don't have lanes or turn lanes so it'll get more complex, but I think this is a better starting point. I will have to figure out how to address the curved points and some better edge connection logic, but I like the direction this is heading.
+
+One thing I think could be helpful as the complexity increases is doing a rectangle between the car and the final point and creating the graph based on that, or finding a way to limit the adacency graph and nodes to just those that fall within the the boxed area.
+
+### Later
+
+Getting closer but weird issue with curves.
