@@ -77,7 +77,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     void PlaceNodesViaRaycasting(Vector3 tileCenter, int numRays)
     {
-        float maxRadius = 1f; // Adjust based on tile size
+        float maxRadius = 1.5f; // Adjust based on tile size
         for (int i = 0; i < numRays; i++)
         {
             float angle = 2 * Mathf.PI * i / numRays;
@@ -87,15 +87,19 @@ public class DynamicGraphGenerator2D : MonoBehaviour
             //TODO: Closer but fix this and maybe follow the hit for proper curve?
             if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
             {
-                for (float distance = .1f; distance <= maxRadius; distance += .1f)
+                for (float distance = .5f; distance <= maxRadius; distance += .5f)
                 {
                     Vector3 samplePoint = tileCenter + direction * distance;
-
-                    // Validate the sampled point
-                    if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
+                    RaycastHit2D sampleHit = Physics2D.Raycast(samplePoint, direction, maxRadius, roadMask);
+                    if (sampleHit.collider != null)
                     {
                         AddNode(samplePoint);
                     }
+                    // Validate the sampled point
+                    /* if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
+                    {
+                        AddNode(samplePoint);
+                    } */
                 }
                 //AddNode(hit.point);
             }

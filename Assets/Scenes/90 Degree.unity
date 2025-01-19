@@ -966,7 +966,7 @@ CompositeCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
+  m_GeometryType: 1
   m_GenerationType: 0
   m_EdgeRadius: 0
   m_ColliderPaths:
@@ -1834,7 +1834,7 @@ MonoBehaviour:
     m_Bits: 8
   roadTiles: {fileID: 1367542496}
   scanRadius: 2
-  nodeSpacing: 0.25
+  nodeSpacing: 1
   edgeConnectionDistance: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
