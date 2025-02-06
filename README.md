@@ -54,4 +54,12 @@ One thing I think could be helpful as the complexity increases is doing a rectan
 
 ### Later
 
-Getting closer but weird issue with curves.
+Getting closer but weird issue with curves. O okay now I got it, time for path finding.
+
+## 5 and 6th of Feb
+
+Been sooo long with work stuff taking up lots of time as we navigated some interesting times.
+
+Tonight I got started on learning A-star. It's been a while since I've done greedy search, but some of the concepts are coming back thankfully. Hopefully tomorrow night I can actually finish the implementation and get started on using it in training.
+
+I am trying to get chatgpt to teach me, not just code stuff for me on this project so sometimes progress feels weirdly slow compared to when I just have it crank out some boiler plate code or something I already know how to do. But, I love working on this. I really want to get it to where it can navigate a simple city scene and at that point I want to implement the underlying AI training code into the real details.

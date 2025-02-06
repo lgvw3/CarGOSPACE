@@ -9,6 +9,9 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     public float scanRadius = 2f;   // Scan radius around the agent
     public float nodeSpacing = 2f;   // Distance between nodes
     public float edgeConnectionDistance = 3f;  // Max distance to connect nodes
+    public float curveMaxRadiusToConsider = 1f;
+    public float distanceToNextCurvedNode = .5f;
+    public Transform viewOrigin; // The point from which the view originates (front of the car)
 
     private List<Vector2> graphNodes = new List<Vector2>();
     private List<(Vector2, Vector2)> graphEdges = new List<(Vector2, Vector2)>();
@@ -77,20 +80,22 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     void PlaceNodesViaRaycasting(Vector3 tileCenter, int numRays)
     {
-        float maxRadius = 1.5f; // Adjust based on tile size
+        if (distanceToNextCurvedNode == 0) {
+            distanceToNextCurvedNode = .5f;
+        }
         for (int i = 0; i < numRays; i++)
         {
             float angle = 2 * Mathf.PI * i / numRays;
             Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
-            RaycastHit2D hit = Physics2D.Raycast(tileCenter, direction, maxRadius, roadMask);
+            RaycastHit2D hit = Physics2D.Raycast(tileCenter, direction, curveMaxRadiusToConsider, roadMask);
 
             //TODO: Closer but fix this and maybe follow the hit for proper curve?
             if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
             {
-                for (float distance = .5f; distance <= maxRadius; distance += .5f)
+                for (float distance = distanceToNextCurvedNode; distance <= curveMaxRadiusToConsider; distance += distanceToNextCurvedNode)
                 {
                     Vector3 samplePoint = tileCenter + direction * distance;
-                    RaycastHit2D sampleHit = Physics2D.Raycast(samplePoint, direction, maxRadius, roadMask);
+                    RaycastHit2D sampleHit = Physics2D.Raycast(samplePoint, direction, curveMaxRadiusToConsider, roadMask);
                     if (sampleHit.collider != null)
                     {
                         AddNode(samplePoint);
@@ -178,5 +183,24 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         {
             Gizmos.DrawLine(new Vector3(edge.Item1.x, edge.Item1.y, 0), new Vector3(edge.Item2.x, edge.Item2.y, 0));
         }
+    }
+
+    void AStarPathCreation()
+    {
+        // get the node closest to the view origin in the manhattan direction of the target
+
+        // create a priority que (whatever c# version is) for neighbors to search
+
+        // create a set to look up nodes visited
+
+        // start node value f(n) = 0 + h(n) where h(n) is the euclidean distance to target
+
+        // add start node to nodes visited
+        
+        // for each neighbor 
+            // find f(n) = current distance + euclidean to neighbor + euclidean to target
+            // store in priority que
+
+
     }
 }

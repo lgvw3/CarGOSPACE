@@ -1836,6 +1836,8 @@ MonoBehaviour:
   scanRadius: 2
   nodeSpacing: 1
   edgeConnectionDistance: 2
+  curveMaxRadiusToConsider: 2
+  distanceToNextCurvedNode: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
