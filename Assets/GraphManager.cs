@@ -188,6 +188,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     void AStarPathCreation()
     {
         // get the node closest to the view origin in the manhattan direction of the target
+        // get the target node as the node with closest target origin in the manhatan direction of car (viewOrigin)
 
         // create a priority que (whatever c# version is) for neighbors to search
 
@@ -196,10 +197,20 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         // start node value f(n) = 0 + h(n) where h(n) is the euclidean distance to target
 
         // add start node to nodes visited
+        // add start node to priority que
+        // targetFound = false
+
+        // while priority que length > 0 and !targetFound
         
-        // for each neighbor 
-            // find f(n) = current distance + euclidean to neighbor + euclidean to target
-            // store in priority que
+            // node = top of priority que
+            // if node is target..... i'm at this step
+            // for each neighbor to node 
+                // add neighbor to visited set
+                // find f(n) = current distance + euclidean to neighbor + euclidean to target
+                // store in priority que if not in que
+
+            
+
 
 
     }
