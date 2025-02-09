@@ -1837,7 +1837,8 @@ MonoBehaviour:
   nodeSpacing: 1
   edgeConnectionDistance: 2
   curveMaxRadiusToConsider: 2
-  distanceToNextCurvedNode: 1
+  distanceToNextCurvedNode: 0.75
+  destination: {fileID: 1121217253}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

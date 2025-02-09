@@ -23,6 +23,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     private float currentStartNodeBestDistanceToTarget = 10000000;
     private Vector2 endNode;
     private List<Vector2> path = new();
+    private List<Vector2> visitedNodes = new();
 
     void Start()
     {
@@ -128,33 +129,30 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     void ConnectNodes()
     {
         graphEdges.Clear();  // Clear existing edges
-
+        graphEdgeAdgency.Clear();
+        visitedNodes.Clear();
+        path.Clear();
+        Debug.Log($"Connect Nodes graph nodes length: {graphNodes.Count}");
         for (int i = 0; i < graphNodes.Count; i++)
         {
+            if (!graphEdgeAdgency.ContainsKey(graphNodes[i]))
+            {
+                graphEdgeAdgency.Add(graphNodes[i], new List<(Vector2, Vector2)>());
+            }
             for (int j = i + 1; j < graphNodes.Count; j++)
             {
                 // Connect nodes that are close enough (avoids cross-connecting far nodes)
                 if (Vector2.Distance(graphNodes[i], graphNodes[j]) <= edgeConnectionDistance)
                 {
                     graphEdges.Add((graphNodes[i], graphNodes[j]));
-                    if (graphEdgeAdgency.ContainsKey(graphNodes[i]))
-                    {
-                        List<(Vector2, Vector2)> temp = graphEdgeAdgency[graphNodes[i]];
-                        temp.Add((graphNodes[i], graphNodes[j]));
-                        graphEdgeAdgency[graphNodes[i]] = temp;
-                    }
-                    else 
-                    {
-                        List<(Vector2, Vector2)> temp = new()
-                        {
-                            (graphNodes[i], graphNodes[j])
-                        };
-                        graphEdgeAdgency.Add(graphNodes[i], temp);
-                    }
+                    List<(Vector2, Vector2)> temp = graphEdgeAdgency[graphNodes[i]];
+                    temp.Add((graphNodes[i], graphNodes[j]));
+                    graphEdgeAdgency[graphNodes[i]] = temp;
                 }
                 
             }
         }
+        Debug.Log($"End connect. Graph Adgency key count: {graphEdgeAdgency.Keys.Count}");
     }
 
 
@@ -182,10 +180,16 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         {
             AStarPathCreation();
         }
-        Debug.Log(path.Count);
+        Debug.Log($"Path steps: {path.Count}");
+        Gizmos.color = Color.yellow;
         foreach(Vector2 node in path)
         {
             Gizmos.DrawCube((Vector3)node, new Vector3(.3f, .3f, 0));
+        }
+
+        foreach(Vector2 node in visitedNodes)
+        {
+            Gizmos.DrawSphere((Vector3)node, .1f);
         }
     }
 
@@ -196,6 +200,16 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         public float Gn { get; set; }
         public float Hn { get; set; }
         public float Fn => Gn + Hn;
+
+        public override bool Equals(object obj)
+        {
+            return obj is PathNode node && Position.Equals(node.Position);
+        }
+
+        public override int GetHashCode()
+        {
+            return Position.GetHashCode();
+        }
     }
 
     // Custom comparer to sort nodes by fCost
@@ -217,19 +231,18 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     void AStarPathCreation()
     {
         // start node and target node are obtained in generating the graph
-        Debug.Log("Am I getting here?");
         // create a priority que (whatever c# version is) for neighbors to search
         SortedSet<PathNode> openSet = new(new FCostComparer());
         // create a set to look up nodes visited
-        HashSet<PathNode> closedSet = new();
-        Dictionary<Vector2, PathNode> nodeLookup = new Dictionary<Vector2, PathNode>();
+        HashSet<Vector2> closedSet = new();
+        Dictionary<Vector2, PathNode> nodeLookup = new();
         // start node value f(n) = 0 + h(n) where h(n) is the euclidean distance to target
         PathNode startPathNode = new()
         {
             Position = startNode,
             Parent = null,
             Gn = 0,
-            Hn = SquaredEuclideanDistance(startNode, endNode)
+            Hn = Vector2.Distance(startNode, endNode)
         };
         // add start node to priority que
         openSet.Add(startPathNode);
@@ -241,49 +254,59 @@ public class DynamicGraphGenerator2D : MonoBehaviour
             PathNode node = openSet.Min;
             openSet.Remove(node);
             nodeLookup.Remove(node.Position);
+            visitedNodes.Add(node.Position);
 
             if (node.Position == endNode)
             {
+                Debug.Log("Found Target");
                 path.Add(node.Position);
-                // trace the path back to the start by following the parentNodeId in the node class appending that node in the visited set to "path" 
+                // trace the path back to the start by following the parent
                 PathNode curr = node.Parent;
-                while (curr.Parent != null)
+                while (curr != null)
                 {
                     path.Add(curr.Position);
                     curr = curr.Parent;
                 }
                 // reverse "path"
                 path.Reverse();
+                return;
             }
             // add node to visited set
-            closedSet.Add(node);
-            nodeLookup.Add(node.Position, node);
+            closedSet.Add(node.Position);
+            Debug.Log($"In loop: {node.Position} and {node.Parent?.Position } and Neighbors: {graphEdgeAdgency[node.Position].Count}");
+
             // for each neighbor to node 
             foreach ((Vector2, Vector2) pair in graphEdgeAdgency[node.Position])
             {
-                // create node with vector2, gn, fn, and parent
-                PathNode neighborNode = new()
-                {
-                    Position = pair.Item2,
-                    Parent = node,
-                    Gn = node.Gn + SquaredEuclideanDistance(node.Position, pair.Item2), // g(n) = node.gn + euclidean to neighbor
-                    Hn = SquaredEuclideanDistance(pair.Item2, endNode) // h(n) = neighbor euclidean to target
-                    // f(n) = g(n) + h(n)
-                };
                 // if neighbor not in visited set:
-                if (!closedSet.Contains(neighborNode))
+                if (!closedSet.Contains(pair.Item2))
                 {
+                    // create node with vector2, gn, fn, and parent
+                    PathNode neighborNode = new()
+                    {
+                        Position = pair.Item2,
+                        Parent = node,
+                        Gn = node.Gn + Vector2.Distance(node.Position, pair.Item2), // g(n) = node.gn + euclidean to neighbor
+                        Hn = Vector2.Distance(pair.Item2, endNode) // h(n) = neighbor euclidean to target
+                        // f(n) = g(n) + h(n)
+                    };
                     if (nodeLookup.ContainsKey(neighborNode.Position))
                     {
-                        openSet.Remove(nodeLookup[neighborNode.Position]);
-                        openSet.Add(neighborNode);
+                        if (nodeLookup[neighborNode.Position].Gn > neighborNode.Gn) {
+                            openSet.Remove(nodeLookup[neighborNode.Position]);
+                            openSet.Add(neighborNode);
+                            nodeLookup[neighborNode.Position] = neighborNode;
+                        }
                     }
                     else
                     {
                         openSet.Add(neighborNode);
+                        nodeLookup.Add(neighborNode.Position, neighborNode);
                     }
                 }
             }
         }
+        Debug.Log("No path found");
     }
+
 }
