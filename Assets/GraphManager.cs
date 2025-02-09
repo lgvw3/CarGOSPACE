@@ -11,10 +11,16 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     public float edgeConnectionDistance = 3f;  // Max distance to connect nodes
     public float curveMaxRadiusToConsider = 1f;
     public float distanceToNextCurvedNode = .5f;
-    public Transform viewOrigin; // The point from which the view originates (front of the car)
+    //public Transform viewOrigin; // The point from which the view originates (front of the car)
+    public Transform destination; // the target destination in my mind an equivalent to coordinates or an address in maps
 
     private List<Vector2> graphNodes = new List<Vector2>();
     private List<(Vector2, Vector2)> graphEdges = new List<(Vector2, Vector2)>();
+
+    private float currentStartNodeBestDistanceToCar = 10000000;
+    private Vector2 startNode;
+    private float currentStartNodeBestDistanceToTarget = 10000000;
+    private Vector2 endNode;
 
     void Start()
     {
@@ -74,6 +80,17 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     {
         if (!graphNodes.Contains(point))
         {
+            float distanceToCar = Vector2.Distance(transform.position, point);
+            if (distanceToCar < currentStartNodeBestDistanceToCar) {
+                currentStartNodeBestDistanceToCar = distanceToCar;
+                startNode = point;
+            }
+
+            float distanceToTarget = Vector2.Distance(destination.position, point);
+            if (distanceToTarget < currentStartNodeBestDistanceToTarget) {
+                currentStartNodeBestDistanceToTarget = distanceToTarget;
+                endNode = point;
+            }
             graphNodes.Add(point);
         }
     }
@@ -89,7 +106,6 @@ public class DynamicGraphGenerator2D : MonoBehaviour
             Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
             RaycastHit2D hit = Physics2D.Raycast(tileCenter, direction, curveMaxRadiusToConsider, roadMask);
 
-            //TODO: Closer but fix this and maybe follow the hit for proper curve?
             if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
             {
                 for (float distance = distanceToNextCurvedNode; distance <= curveMaxRadiusToConsider; distance += distanceToNextCurvedNode)
@@ -100,43 +116,9 @@ public class DynamicGraphGenerator2D : MonoBehaviour
                     {
                         AddNode(samplePoint);
                     }
-                    // Validate the sampled point
-                    /* if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
-                    {
-                        AddNode(samplePoint);
-                    } */
                 }
-                //AddNode(hit.point);
             }
         }
-
-
-        /* float segmentAngle = 360 / (numRays - 1); // Adjust for the segments
-
-        for (int i = 0; i < numRays; i++)
-        {
-            float angle = -360 / 2 + i * segmentAngle;
-            Vector3 rayDirection = Quaternion.Euler(0, 0, angle) * tileCenter;
-            RaycastHit2D hit = Physics2D.Raycast(tileCenter, rayDirection, .1f, roadMask);
-            if (hit.collider != null) 
-            {
-                for (float distance = .1f; distance <= maxRadius; distance += .1f)
-                {
-                    Vector3 samplePoint = tileCenter + rayDirection * distance;
-
-                    // Validate the sampled point
-                    if (roadTiles.HasTile(roadTiles.WorldToCell(samplePoint)))
-                    {
-                        AddNode(samplePoint);
-                    }
-                }
-            } */
-
-/*             if (hit.collider != null && roadTiles.HasTile(roadTiles.WorldToCell(hit.point)))
-            {
-                AddNode(hit.point);
-            } */
-        
     }
 
 
@@ -150,15 +132,12 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         {
             for (int j = i + 1; j < graphNodes.Count; j++)
             {
-                float distance = Vector2.Distance(graphNodes[i], graphNodes[j]);
-
                 // Connect nodes that are close enough (avoids cross-connecting far nodes)
-
-                // TODO: Need something like raycasting to confirm the whole edge is on road
-                if (distance <= edgeConnectionDistance)
+                if (Vector2.Distance(graphNodes[i], graphNodes[j]) <= edgeConnectionDistance)
                 {
                     graphEdges.Add((graphNodes[i], graphNodes[j]));
                 }
+                
             }
         }
     }
@@ -185,33 +164,69 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         }
     }
 
+    public class PathNode 
+    {
+            public Vector2 Position { get; set; }
+            public PathNode Parent { get; set; }
+            public float Gn { get; set; }
+            public float Hn { get; set; }
+            public float Fn => Gn + Hn;
+    }
+
+    // Custom comparer to sort nodes by fCost
+    public class FCostComparer : IComparer<PathNode> 
+    {
+        public int Compare(PathNode a, PathNode b) {
+            int compare = a.Fn.CompareTo(b.Fn);
+            return compare == 0 ? a.Position.GetHashCode().CompareTo(b.Position.GetHashCode()) : compare;
+        }
+    }
+
     void AStarPathCreation()
     {
-        // get the node closest to the view origin in the manhattan direction of the target
-        // get the target node as the node with closest target origin in the manhatan direction of car (viewOrigin)
+        // start node and target node are obtained in generating the graph
 
         // create a priority que (whatever c# version is) for neighbors to search
-
+        SortedSet<PathNode> openSet = new(new FCostComparer());
         // create a set to look up nodes visited
-
+        SortedSet<PathNode> closedSet = new();
         // start node value f(n) = 0 + h(n) where h(n) is the euclidean distance to target
-
-        // add start node to nodes visited
+        PathNode startPathNode = new PathNode {
+            Position = startNode,
+            Parent = null,
+            Gn = 0,
+            Hn = Vector2.Distance(startNode, endNode)
+        };
         // add start node to priority que
-        // targetFound = false
+        openSet.Add(startPathNode);
 
-        // while priority que length > 0 and !targetFound
-        
-            // node = top of priority que
-            // if node is target..... i'm at this step
+        while(openSet.Count > 0) 
+        {
+            PathNode node = openSet.Min;
+            openSet.Remove(node);
+
+            if (node.Position == endNode)
+            {
+                // create an empty array of node objects called "path"
+                // trace the path back to the start by following the parentNodeId in the node class appending that node in the visited set to "path" 
+                // reverse "path"
+                // return "path"
+                break;
+            }
+            // add node to visited set
             // for each neighbor to node 
-                // add neighbor to visited set
-                // find f(n) = current distance + euclidean to neighbor + euclidean to target
-                // store in priority que if not in que
-
-            
-
-
+                // if neighbor not in visited set:
+                    // g(n) = node.gn + euclidean to neighbor
+                    // h(n) = neighbor euclidean to target
+                    // f(n) = g(n) + h(n)
+                    // create node with vector2, gn, fn, and parent
+                    // if in que:
+                        // decrease key
+                    // else:
+                        // store in priority que
+        }
+        
+        //return null;
 
     }
 }
