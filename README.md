@@ -63,3 +63,9 @@ Been sooo long with work stuff taking up lots of time as we navigated some inter
 Tonight I got started on learning A-star. It's been a while since I've done greedy search, but some of the concepts are coming back thankfully. Hopefully tomorrow night I can actually finish the implementation and get started on using it in training.
 
 I am trying to get chatgpt to teach me, not just code stuff for me on this project so sometimes progress feels weirdly slow compared to when I just have it crank out some boiler plate code or something I already know how to do. But, I love working on this. I really want to get it to where it can navigate a simple city scene and at that point I want to implement the underlying AI training code into the real details.
+
+## Feb 10th
+
+Last weekend I got A* to a decent enough place I'm going to start using it for training. The third scene is where it actually means something for now since that is the only one it has any real directional choice to make. Haven't done the training yet, had to mess with the colliders for a while until I understood a little better what was happening and I think I got it now.
+
+Time to start training with the nav data and then to go build a little neighborhood is the next step I think.

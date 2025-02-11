@@ -43,6 +43,9 @@ public class CameraSensor : MonoBehaviour
             if (hit.collider != null)
             {
                 // get a proportion of the viewspace that is identified as road vs obstacle
+
+                // TODO: I learned from the graph manager stuff that this isn't doing what I think it is lol
+                // got to figure out how to do this for real. almost weird that it works
                 detectedTiles[i] = hit.distance / viewDistance;
             }
             else

@@ -4,6 +4,7 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class AICar : Agent
 {
@@ -15,13 +16,13 @@ public class AICar : Agent
     public LayerMask trackLayer; // Assign this in inspector to your track's layer
     
     public CameraSensor cameraSensor;
+    public DynamicGraphGenerator2D navData;
+    private int currentNavTarget = 0;
 
     private float lastDistance = 0f;
     private Vector3 lastPosition;
 
     private static int totalNumberOfStepsTaken = 0;
-
-    private int direction = 1; // start by going left
 
     public int GetTotalStepsAcrossEpisodes()
     {
@@ -44,7 +45,17 @@ public class AICar : Agent
         // Observations for the environment
         sensor.AddObservation(transform.rotation.z / 360f); // Car's rotation, steering wheel input simulation
         sensor.AddObservation((target.position - transform.position).normalized); // Direction to target
-        sensor.AddObservation(direction); // for the 90 degree test simulate giving nav directions
+        
+        List<Vector2> path = navData.path;
+        // see how close it is to the target gps equivalent
+        float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
+        if (distanceToNextTarget < 1 && currentNavTarget < path.Count - 1) 
+        {
+            currentNavTarget += 1;
+            distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
+
+        }
+        sensor.AddObservation(distanceToNextTarget);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -88,8 +99,10 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
-        if (SceneManager.GetActiveScene().name == "90 Degree") {
-            direction = EndAdjuster.Instance.OnEpisodeBegin();
+        navData.AStarPathCreation();
+        currentNavTarget = 1;
+        if (navData.path.Count < 1) {
+            currentNavTarget = 0;
         }
         // Define a small range for position and rotation randomness
         float positionRange = 0.01f; // Adjust as needed

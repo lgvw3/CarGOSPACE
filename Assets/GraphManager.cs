@@ -7,10 +7,10 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     public LayerMask roadMask;       // Layer for the road
     public Tilemap roadTiles;
     public float scanRadius = 2f;   // Scan radius around the agent
-    public float nodeSpacing = 2f;   // Distance between nodes
-    public float edgeConnectionDistance = 3f;  // Max distance to connect nodes
-    public float curveMaxRadiusToConsider = 1f;
-    public float distanceToNextCurvedNode = .5f;
+    public float nodeSpacing = 1f;   // Distance between nodes
+    public float edgeConnectionDistance = 2f;  // Max distance to connect nodes
+    public float curveMaxRadiusToConsider = 2f;
+    public float distanceToNextCurvedNode = .75f;
     //public Transform viewOrigin; // The point from which the view originates (front of the car)
     public Transform destination; // the target destination in my mind an equivalent to coordinates or an address in maps
 
@@ -22,14 +22,19 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     private Vector2 startNode;
     private float currentStartNodeBestDistanceToTarget = 10000000;
     private Vector2 endNode;
-    private List<Vector2> path = new();
+    public List<Vector2> path = new();
     private List<Vector2> visitedNodes = new();
 
     void Start()
     {
+        if (roadTiles == null) {
+            roadTiles = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
+        }
+        roadTiles.GetComponent<CompositeCollider2D>().geometryType = CompositeCollider2D.GeometryType.Polygons;
         GenerateGraph();
         ConnectNodes();
         AStarPathCreation();
+        roadTiles.GetComponent<CompositeCollider2D>().geometryType = CompositeCollider2D.GeometryType.Outlines;
     }
 
     // Generate nodes dynamically along the track
@@ -159,6 +164,10 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     // Draw Gizmos for debugging
     void OnDrawGizmos()
     {
+        if (roadTiles == null) {
+            roadTiles = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
+        }
+        roadTiles.GetComponent<CompositeCollider2D>().geometryType = CompositeCollider2D.GeometryType.Polygons;
         GenerateGraph();
         ConnectNodes();
         Gizmos.color = Color.yellow;
@@ -180,17 +189,19 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         {
             AStarPathCreation();
         }
-        Debug.Log($"Path steps: {path.Count}");
+        //Debug.Log($"Path steps: {path.Count}");
         Gizmos.color = Color.yellow;
         foreach(Vector2 node in path)
         {
             Gizmos.DrawCube((Vector3)node, new Vector3(.3f, .3f, 0));
+            //Debug.Log($"Path step: {node}");
         }
 
         foreach(Vector2 node in visitedNodes)
         {
             Gizmos.DrawSphere((Vector3)node, .1f);
         }
+        roadTiles.GetComponent<CompositeCollider2D>().geometryType = CompositeCollider2D.GeometryType.Outlines;
     }
 
     public class PathNode 
@@ -228,7 +239,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         return dx * dx + dy * dy;
     }
 
-    void AStarPathCreation()
+    public void AStarPathCreation()
     {
         // start node and target node are obtained in generating the graph
         // create a priority que (whatever c# version is) for neighbors to search
@@ -248,7 +259,6 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         openSet.Add(startPathNode);
         nodeLookup.Add(startNode, startPathNode);
 
-        Debug.Log($"Open set count: {openSet.Count}");
         while(openSet.Count > 0) 
         {
             PathNode node = openSet.Min;
@@ -258,7 +268,6 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
             if (node.Position == endNode)
             {
-                Debug.Log("Found Target");
                 path.Add(node.Position);
                 // trace the path back to the start by following the parent
                 PathNode curr = node.Parent;
@@ -273,7 +282,6 @@ public class DynamicGraphGenerator2D : MonoBehaviour
             }
             // add node to visited set
             closedSet.Add(node.Position);
-            Debug.Log($"In loop: {node.Position} and {node.Parent?.Position } and Neighbors: {graphEdgeAdgency[node.Position].Count}");
 
             // for each neighbor to node 
             foreach ((Vector2, Vector2) pair in graphEdgeAdgency[node.Position])
