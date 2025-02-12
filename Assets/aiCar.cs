@@ -24,6 +24,8 @@ public class AICar : Agent
 
     private static int totalNumberOfStepsTaken = 0;
 
+    public EndAdjuster endAdjuster;
+
     public int GetTotalStepsAcrossEpisodes()
     {
         return totalNumberOfStepsTaken;
@@ -48,6 +50,7 @@ public class AICar : Agent
         
         List<Vector2> path = navData.path;
         // see how close it is to the target gps equivalent
+        // TODO: likely need to advance to next target based on some other trigger and do a new path finding
         float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
         if (distanceToNextTarget < 1 && currentNavTarget < path.Count - 1) 
         {
@@ -99,6 +102,10 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
+        if (SceneManager.GetActiveScene().name == "90 Degree")
+        {
+            endAdjuster.MoveTarget(CompletedEpisodes, GetCumulativeReward());
+        }
         navData.AStarPathCreation();
         currentNavTarget = 1;
         if (navData.path.Count < 1) {

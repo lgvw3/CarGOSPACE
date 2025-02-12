@@ -676,18 +676,22 @@ MonoBehaviour:
   roadTiles: {fileID: 1649237209}
   scanRadius: 2
   nodeSpacing: 1
-  edgeConnectionDistance: 2
+  edgeConnectionDistance: 1.4
   curveMaxRadiusToConsider: 2
   distanceToNextCurvedNode: 0.75
   destination: {fileID: 1981939271}
   path:
   - {x: -0.049999952, y: -0.5}
+  - {x: 0.95000005, y: -0.5}
   - {x: 1.95, y: -0.5}
-  - {x: 3.6629877, y: -0.19290978}
+  - {x: 2.88934, y: -0.56066036}
+  - {x: 3.95, y: -0.25}
   - {x: 5.3358192, y: -0.074025154}
-  - {x: 7.2, y: -0.50000006}
+  - {x: 6.45, y: -0.5000001}
+  - {x: 7.25709, y: -0.7870126}
   - {x: 8.642909, y: -0.7870126}
   - {x: 9.95, y: -0.5}
+  - {x: 10.95, y: -0.5}
   - {x: 11.95, y: -0.5}
 --- !u!1 &1264391639
 GameObject:

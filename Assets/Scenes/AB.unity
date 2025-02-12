@@ -910,20 +910,24 @@ MonoBehaviour:
   roadTiles: {fileID: 1314743201}
   scanRadius: 2
   nodeSpacing: 1
-  edgeConnectionDistance: 2
+  edgeConnectionDistance: 1.4
   curveMaxRadiusToConsider: 2
   distanceToNextCurvedNode: 0.75
   destination: {fileID: 381444623}
   path:
   - {x: -0.049999952, y: -0.5}
   - {x: 0.95000005, y: -0.5}
+  - {x: 1.95, y: -0.5}
   - {x: 2.95, y: -0.5}
   - {x: 3.95, y: -0.5}
+  - {x: 4.95, y: -0.5}
   - {x: 5.95, y: -0.5}
+  - {x: 6.95, y: -0.5}
   - {x: 7.95, y: -0.5}
+  - {x: 8.95, y: -0.5}
   - {x: 9.95, y: -0.5}
+  - {x: 10.95, y: -0.5}
   - {x: 11.95, y: -0.5}
-  compositeCollider2D: {fileID: 1314743202}
 --- !u!1 &1314743198
 GameObject:
   m_ObjectHideFlags: 0

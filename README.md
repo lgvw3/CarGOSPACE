@@ -69,3 +69,7 @@ I am trying to get chatgpt to teach me, not just code stuff for me on this proje
 Last weekend I got A* to a decent enough place I'm going to start using it for training. The third scene is where it actually means something for now since that is the only one it has any real directional choice to make. Haven't done the training yet, had to mess with the colliders for a while until I understood a little better what was happening and I think I got it now.
 
 Time to start training with the nav data and then to go build a little neighborhood is the next step I think.
+
+## Feb 11th and 12th
+
+Okay so the nav data needed some tweaks as did the camera sensor. With that done training on scene 3 is much improved! Ooof but I made a change and now have issues with the end adjuster. Should be simple, so I will get back to it soon.
