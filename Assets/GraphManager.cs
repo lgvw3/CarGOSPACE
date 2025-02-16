@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,8 +12,8 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     public float edgeConnectionDistance = 2f;  // Max distance to connect nodes
     public float curveMaxRadiusToConsider = 2f;
     public float distanceToNextCurvedNode = .75f;
-    //public Transform viewOrigin; // The point from which the view originates (front of the car)
-    public Transform destination; // the target destination in my mind an equivalent to coordinates or an address in maps
+    //public Transform viewOrigin;// The point from which the view originates (front of the car)
+    private Transform destination; // the target destination in my mind an equivalent to coordinates or an address in maps
 
     private List<Vector2> graphNodes = new List<Vector2>();
     private List<(Vector2, Vector2)> graphEdges = new List<(Vector2, Vector2)>();
@@ -27,6 +28,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     void Start()
     {
+        destination = GameObject.Find("end").transform;
         if (roadTiles == null) {
             roadTiles = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
         }
@@ -40,6 +42,9 @@ public class DynamicGraphGenerator2D : MonoBehaviour
     // Generate nodes dynamically along the track
     void GenerateGraph()
     {
+        destination = GameObject.Find("end").transform;
+        currentStartNodeBestDistanceToCar = 10000000;
+        currentStartNodeBestDistanceToTarget = 10000000;
         graphNodes.Clear();  // Clear existing nodes
 
         if (roadTiles == null) {
@@ -144,8 +149,12 @@ public class DynamicGraphGenerator2D : MonoBehaviour
             {
                 graphEdgeAdgency.Add(graphNodes[i], new List<(Vector2, Vector2)>());
             }
-            for (int j = i + 1; j < graphNodes.Count; j++)
+            for (int j = 0; j < graphNodes.Count; j++)
             {
+                if (j == i) 
+                {
+                    continue;
+                }
                 // Connect nodes that are close enough (avoids cross-connecting far nodes)
                 if (Vector2.Distance(graphNodes[i], graphNodes[j]) <= edgeConnectionDistance)
                 {
@@ -189,7 +198,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
         {
             AStarPathCreation();
         }
-        //Debug.Log($"Path steps: {path.Count}");
+        Debug.Log($"Path steps: {path.Count}");
         Gizmos.color = Color.yellow;
         foreach(Vector2 node in path)
         {
@@ -241,6 +250,16 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     public void AStarPathCreation()
     {
+
+        if (endNode == null)
+        {
+            GenerateGraph();
+            ConnectNodes();
+        }
+        else 
+        {
+            Debug.Log($"The end node position: {endNode} and neighbors: {graphEdgeAdgency[endNode].Count}");
+        }
         // start node and target node are obtained in generating the graph
         // create a priority que (whatever c# version is) for neighbors to search
         SortedSet<PathNode> openSet = new(new FCostComparer());

@@ -1,21 +1,29 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class EndAdjuster : MonoBehaviour
 {
-    public Transform target;
+    public GameObject target;
     public Transform[] targetPositions; // Possible positions for the target
 
     public void MoveTarget(int episodeNumber, float cumulativeReward)
     {
         // Wait to change until we have learned a little about turns
-        if (episodeNumber >= 10 && cumulativeReward > 7f)
+        if (SceneManager.GetActiveScene().name == "Intersections")
         {
-            target.position = targetPositions[Random.Range(0, targetPositions.Length + 1)].position;
+            Tilemap roadTiles = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
+
+        }
+        Debug.Log(episodeNumber);
+        if (episodeNumber >= 10 && cumulativeReward > 8f)
+        {
+            target.transform.position = targetPositions[Random.Range(0, targetPositions.Length)].position;
         }
         else
         {
             // Default target placement for early episodes
-            target.position = targetPositions[0].position;
+            target.transform.position = targetPositions[0].position;
         }
     }
 }

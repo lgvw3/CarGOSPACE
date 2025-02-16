@@ -73,3 +73,7 @@ Time to start training with the nav data and then to go build a little neighborh
 ## Feb 11th and 12th
 
 Okay so the nav data needed some tweaks as did the camera sensor. With that done training on scene 3 is much improved! Ooof but I made a change and now have issues with the end adjuster. Should be simple, so I will get back to it soon.
+
+## Feb 15th
+
+Fixed the issue that was actually with edge connections messing with path finding in A*. Still some work to do on end adjuster, but with a working A* we are improving!
