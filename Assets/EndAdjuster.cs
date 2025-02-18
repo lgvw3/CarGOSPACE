@@ -16,11 +16,18 @@ public class EndAdjuster : MonoBehaviour
 
         }
         Debug.Log($"{episodeNumber}, {cumulativeReward}");
-        if (episodeNumber >= 10 && cumulativeReward > 8f && reachedDestinationOnLastEpisode)
+        //step to help it learn to turn
+        if (episodeNumber >= 50 && cumulativeReward > 10f && reachedDestinationOnLastEpisode) 
         {
-            target.transform.position = targetPositions[Random.Range(0, targetPositions.Length)].position;
+            // the bigger step
+            target.transform.position = targetPositions[Random.Range(2, targetPositions.Length)].position;
         }
-        else
+        else if (episodeNumber >= 10 && cumulativeReward > 8f && reachedDestinationOnLastEpisode)
+        {
+            // the smaller step
+            target.transform.position = targetPositions[Random.Range(0, 2)].position;
+        }
+        else if (reachedDestinationOnLastEpisode)
         {
             // Default target placement for early episodes
             target.transform.position = targetPositions[0].position;

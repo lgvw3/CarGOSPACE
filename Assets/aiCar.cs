@@ -48,19 +48,21 @@ public class AICar : Agent
         }
         // Observations for the environment
         sensor.AddObservation(transform.rotation.z / 360f); // Car's rotation, steering wheel input simulation
-        sensor.AddObservation((target.position - transform.position).normalized); // Direction to target
         
         List<Vector2> path = navData.path;
         // see how close it is to the target gps equivalent
         // TODO: likely need to advance to next target based on some other trigger and do a new path finding
         float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
-        if (distanceToNextTarget < .5f && currentNavTarget < path.Count - 1) 
+        if (distanceToNextTarget < .25f && currentNavTarget < path.Count - 1) 
         {
             currentNavTarget += 1;
             distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
 
         }
+        Debug.Log($"Current Nav Target Index: {currentNavTarget}. Distance to target: {distanceToNextTarget}");
         sensor.AddObservation(distanceToNextTarget);
+        Vector2 directionToTarget = path[currentNavTarget] - new Vector2(transform.position.x, transform.position.y);
+        sensor.AddObservation(directionToTarget.normalized); // Direction to nav target
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -77,7 +79,7 @@ public class AICar : Agent
         // Reward System
         float distanceToTarget = Vector2.Distance(transform.position, target.position);
         AddReward(-0.001f); // Small penalty for each step to encourage efficiency
-        if (distanceToTarget < 1f) // If close to the target
+        if (distanceToTarget < .25f) // If close to the target
         {
             AddReward(1.0f);
             Debug.Log("Successful Completion");

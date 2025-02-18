@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextSceneName: 90 Degree
   performanceThreshold: 1
-  minimumSteps: 100000
+  minimumSteps: 70000
   agent: {fileID: 1197979886}
 --- !u!4 &434084914
 Transform:
@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 15
+    VectorObservationSize: 14
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
