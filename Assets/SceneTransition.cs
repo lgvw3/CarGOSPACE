@@ -37,9 +37,12 @@ public class SceneTransition : MonoBehaviour
 
     public void Update()
     {
+        // a little hack for me
+        const int TOTAL_STEPS = 0;
+        
         // Check if the agent has met the performance threshold in Scene 1
-        Debug.Log("Cumulative Reward: " + agent.GetCumulativeReward().ToString() + ". Step count: " + agent.GetTotalStepsAcrossEpisodes());
-        if (agent.GetCumulativeReward() >= performanceThreshold && agent.GetTotalStepsAcrossEpisodes() > minimumSteps)
+        Debug.Log("Cumulative Reward: " + agent.GetCumulativeReward().ToString() + ". Step count: " + agent.GetTotalStepsAcrossEpisodes() + TOTAL_STEPS);
+        if (agent.GetCumulativeReward() >= performanceThreshold && agent.GetTotalStepsAcrossEpisodes() + TOTAL_STEPS > minimumSteps)
         {
             Debug.Log("Threshold reached! Transitioning to next scene...");
             TransitionToNextScene();

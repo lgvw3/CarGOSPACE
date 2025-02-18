@@ -77,3 +77,7 @@ Okay so the nav data needed some tweaks as did the camera sensor. With that done
 ## Feb 15th
 
 Fixed the issue that was actually with edge connections messing with path finding in A*. Still some work to do on end adjuster, but with a working A* we are improving!
+
+## Feb 17th
+
+End adjuster is working now and I think we are getting pretty close! Definitely seeing some issues where it learns to just go slow and move forward since that reward is slightly larger than the time step penalty. I think I need to balance that out better and also find a way where I can increment learning to do 90 degree turns and such.

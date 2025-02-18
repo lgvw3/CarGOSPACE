@@ -810,6 +810,7 @@ MonoBehaviour:
     m_Bits: 8
   cameraSensor: {fileID: 965397967}
   navData: {fileID: 965397968}
+  endAdjuster: {fileID: 0}
 --- !u!114 &965397964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -913,7 +914,6 @@ MonoBehaviour:
   edgeConnectionDistance: 1.4
   curveMaxRadiusToConsider: 2
   distanceToNextCurvedNode: 0.75
-  destination: {fileID: 381444623}
   path:
   - {x: -0.049999952, y: -0.5}
   - {x: 0.95000005, y: -0.5}
@@ -1427,7 +1427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextSceneName: Curves
-  performanceThreshold: 2
+  performanceThreshold: 0.4
   minimumSteps: 50000
   agent: {fileID: 965397963}
 --- !u!4 &1541938803

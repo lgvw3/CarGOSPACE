@@ -25,6 +25,8 @@ public class AICar : Agent
     private static int totalNumberOfStepsTaken = 0;
 
     public EndAdjuster endAdjuster;
+    private float lastEpisodeReward = 0f;
+    private bool reachedDestinationOnLastEpisode = false;
 
     public int GetTotalStepsAcrossEpisodes()
     {
@@ -52,7 +54,7 @@ public class AICar : Agent
         // see how close it is to the target gps equivalent
         // TODO: likely need to advance to next target based on some other trigger and do a new path finding
         float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
-        if (distanceToNextTarget < 1 && currentNavTarget < path.Count - 1) 
+        if (distanceToNextTarget < .5f && currentNavTarget < path.Count - 1) 
         {
             currentNavTarget += 1;
             distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
@@ -79,12 +81,14 @@ public class AICar : Agent
         {
             AddReward(1.0f);
             Debug.Log("Successful Completion");
+            lastEpisodeReward = GetCumulativeReward();
+            reachedDestinationOnLastEpisode = true;
             EndEpisode(); // End the episode
         }
         else if (distanceToTarget < lastDistance)
         {
             //reward for progress
-            AddReward(.01f);
+            AddReward(.005f);
         }
         lastDistance = distanceToTarget;
         
@@ -96,6 +100,8 @@ public class AICar : Agent
         {
             Debug.Log("Crash");
             AddReward(-1.0f); // Penalize going out of bounds
+            lastEpisodeReward = GetCumulativeReward();
+            reachedDestinationOnLastEpisode = false;
             EndEpisode();
         }
     }
@@ -104,7 +110,11 @@ public class AICar : Agent
     {
         if (SceneManager.GetActiveScene().name == "90 Degree")
         {
-            endAdjuster.MoveTarget(CompletedEpisodes, GetCumulativeReward());
+            endAdjuster.MoveTarget(CompletedEpisodes, lastEpisodeReward, reachedDestinationOnLastEpisode);
+        }
+        else
+        {
+            Debug.Log($"{CompletedEpisodes}, {lastEpisodeReward}");
         }
         navData.AStarPathCreation();
         currentNavTarget = 1;

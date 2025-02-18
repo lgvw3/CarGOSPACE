@@ -19,4 +19,4 @@ behaviors:
         gamma: 0.99
         strength: 1.0
     summary_freq: 1000
-    max_steps: 210000
+    max_steps: 750000

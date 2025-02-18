@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextSceneName: 90 Degree
-  performanceThreshold: 5.5
-  minimumSteps: 130000
+  performanceThreshold: 1
+  minimumSteps: 100000
   agent: {fileID: 1197979886}
 --- !u!4 &434084914
 Transform:
@@ -480,6 +480,7 @@ MonoBehaviour:
     m_Bits: 8
   cameraSensor: {fileID: 1197979888}
   navData: {fileID: 1197979892}
+  endAdjuster: {fileID: 0}
 --- !u!114 &1197979887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,7 +680,6 @@ MonoBehaviour:
   edgeConnectionDistance: 1.4
   curveMaxRadiusToConsider: 2
   distanceToNextCurvedNode: 0.75
-  destination: {fileID: 1981939271}
   path:
   - {x: -0.049999952, y: -0.5}
   - {x: 0.95000005, y: -0.5}
@@ -688,8 +688,9 @@ MonoBehaviour:
   - {x: 3.95, y: -0.25}
   - {x: 5.3358192, y: -0.074025154}
   - {x: 6.45, y: -0.5000001}
-  - {x: 7.25709, y: -0.7870126}
-  - {x: 8.642909, y: -0.7870126}
+  - {x: 7.2, y: -0.50000006}
+  - {x: 7.95, y: -0.5}
+  - {x: 8.7, y: -0.5}
   - {x: 9.95, y: -0.5}
   - {x: 10.95, y: -0.5}
   - {x: 11.95, y: -0.5}
