@@ -1427,8 +1427,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextSceneName: Curves
-  performanceThreshold: 0.4
-  minimumSteps: 50000
+  performanceThreshold: -0.04
+  minimumSteps: 30000
   agent: {fileID: 965397963}
 --- !u!4 &1541938803
 Transform:

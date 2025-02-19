@@ -17,10 +17,8 @@ public class AICar : Agent
     
     public CameraSensor cameraSensor;
     public DynamicGraphGenerator2D navData;
+    public HashSet<Vector2> visitedNodes = new();
     private int currentNavTarget = 0;
-
-    private float lastDistance = 0f;
-    private Vector3 lastPosition;
 
     private static int totalNumberOfStepsTaken = 0;
 
@@ -52,13 +50,23 @@ public class AICar : Agent
         List<Vector2> path = navData.path;
         // see how close it is to the target gps equivalent
         // TODO: likely need to advance to next target based on some other trigger and do a new path finding
-        float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
-        if (distanceToNextTarget < .25f && currentNavTarget < path.Count - 1) 
+        // float maxSkipDistance = 3f;
+        // kind of a skip ahead
+        int temp = currentNavTarget;
+        for (int i = currentNavTarget; i < path.Count; i++)
         {
-            currentNavTarget += 1;
-            distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
+            float distanceToWaypoint = Vector2.Distance(transform.position, path[i]);
 
+            if (distanceToWaypoint < .4f) // reached equivalent
+            {
+                temp = i;
+            }
         }
+        currentNavTarget = temp;
+        if (currentNavTarget >= path.Count) {
+            currentNavTarget = path.Count - 1;
+        }
+        float distanceToNextTarget = Vector2.Distance(path[currentNavTarget], transform.position);
         Debug.Log($"Current Nav Target Index: {currentNavTarget}. Distance to target: {distanceToNextTarget}");
         sensor.AddObservation(distanceToNextTarget);
         Vector2 directionToTarget = path[currentNavTarget] - new Vector2(transform.position.x, transform.position.y);
@@ -87,12 +95,14 @@ public class AICar : Agent
             reachedDestinationOnLastEpisode = true;
             EndEpisode(); // End the episode
         }
-        else if (distanceToTarget < lastDistance)
+        
+        float distanceToNavPoint = Vector2.Distance(transform.position, navData.path[currentNavTarget]);
+        if (distanceToNavPoint <= .425f && !visitedNodes.Contains(navData.path[currentNavTarget])) // bonus for following path
         {
+            visitedNodes.Add(navData.path[currentNavTarget]); // but not for chilling on it
             //reward for progress
-            AddReward(.005f);
+            AddReward(.01f);
         }
-        lastDistance = distanceToTarget;
         
         if (tilemap == null) {
             tilemap = GameObject.FindGameObjectWithTag("TrackTilemap").GetComponent<Tilemap>();
@@ -119,6 +129,7 @@ public class AICar : Agent
             Debug.Log($"{CompletedEpisodes}, {lastEpisodeReward}");
         }
         navData.AStarPathCreation();
+        visitedNodes.Clear();
         currentNavTarget = 1;
         if (navData.path.Count < 1) {
             currentNavTarget = 0;
@@ -141,6 +152,5 @@ public class AICar : Agent
 
         // Reset other parameters
         rb.linearVelocity = Vector2.zero;
-        lastPosition = transform.position;
     }
 }

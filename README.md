@@ -83,3 +83,7 @@ Fixed the issue that was actually with edge connections messing with path findin
 End adjuster is working now and I think we are getting pretty close! Definitely seeing some issues where it learns to just go slow and move forward since that reward is slightly larger than the time step penalty. I think I need to balance that out better and also find a way where I can increment learning to do 90 degree turns and such.
 
 Even before I made changes, around step 750,000 the ai was beginning to find the destination! One change that was screwing it up though was every crash was reseting the destination and I meant for it to be held until it found it so it could learn to use nav data.
+
+## Feb 18th
+
+I think it's actually learning to follow the nav now, but on scene three it starts forgetting because it goes too long and get's too negative of a reward. I think we may need to use a transformer or set time limits on runs or maybe a "crash" like result for going back. I also think I could set a time limit on how far it needs to get before it is a "crash" equivalent

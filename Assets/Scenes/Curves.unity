@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextSceneName: 90 Degree
-  performanceThreshold: 1
-  minimumSteps: 70000
+  performanceThreshold: -0.03
+  minimumSteps: 50000
   agent: {fileID: 1197979886}
 --- !u!4 &434084914
 Transform:

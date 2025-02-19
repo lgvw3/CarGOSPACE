@@ -250,6 +250,7 @@ public class DynamicGraphGenerator2D : MonoBehaviour
 
     public void AStarPathCreation()
     {
+        path.Clear();
 
         if (endNode == null)
         {
