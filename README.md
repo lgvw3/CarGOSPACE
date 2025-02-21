@@ -87,3 +87,7 @@ Even before I made changes, around step 750,000 the ai was beginning to find the
 ## Feb 18th
 
 I think it's actually learning to follow the nav now, but on scene three it starts forgetting because it goes too long and get's too negative of a reward. I think we may need to use a transformer or set time limits on runs or maybe a "crash" like result for going back. I also think I could set a time limit on how far it needs to get before it is a "crash" equivalent
+
+## Feb 21th
+
+The reward function is a little more solid now! Giving it feedback as it goes towards the nodes is helping! The time limit is huge too, It felt like it was running into or off of an absolute cliff in the 90 degree point, so lesson learned, don't let it despair haha 

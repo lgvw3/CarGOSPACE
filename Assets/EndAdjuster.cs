@@ -7,8 +7,17 @@ public class EndAdjuster : MonoBehaviour
     public GameObject target;
     public Transform[] targetPositions; // Possible positions for the target
 
+    private int successfulEpisodesInARow = 0;
+
     public void MoveTarget(int episodeNumber, float cumulativeReward, bool reachedDestinationOnLastEpisode)
     {
+        if (reachedDestinationOnLastEpisode) {
+            successfulEpisodesInARow++;
+        }
+        else {
+            successfulEpisodesInARow = 0;
+        }
+        int EPISODE_NUMBER = 500; // modify it for me when needed
         // Wait to change until we have learned a little about turns
         if (SceneManager.GetActiveScene().name == "Intersections")
         {
@@ -17,20 +26,20 @@ public class EndAdjuster : MonoBehaviour
         }
         Debug.Log($"{episodeNumber}, {cumulativeReward}");
         //step to help it learn to turn
-        if (episodeNumber >= 50 && cumulativeReward > 10f && reachedDestinationOnLastEpisode) 
+        if (episodeNumber + EPISODE_NUMBER >= 750 && successfulEpisodesInARow > 5 && cumulativeReward > 1f && reachedDestinationOnLastEpisode) 
         {
             // the bigger step
             target.transform.position = targetPositions[Random.Range(2, targetPositions.Length)].position;
         }
-        else if (episodeNumber >= 10 && cumulativeReward > 8f && reachedDestinationOnLastEpisode)
+        else if (episodeNumber + EPISODE_NUMBER >= 500 && successfulEpisodesInARow > 10 && cumulativeReward > 1f && reachedDestinationOnLastEpisode)
         {
             // the smaller step
             target.transform.position = targetPositions[Random.Range(0, 2)].position;
         }
-        else if (reachedDestinationOnLastEpisode)
-        {
-            // Default target placement for early episodes
-            target.transform.position = targetPositions[0].position;
-        }
+        // else if (reachedDestinationOnLastEpisode)
+        // {
+        //     // Default target placement for early episodes
+        //     target.transform.position = targetPositions[0].position;
+        // }
     }
 }
