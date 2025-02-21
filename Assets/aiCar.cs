@@ -21,10 +21,13 @@ public class AICar : Agent
     private int currentNavTarget = 0;
 
     private static int totalNumberOfStepsTaken = 0;
+    private int episodeSteps = 0;
 
     public EndAdjuster endAdjuster;
     private float lastEpisodeReward = 0f;
     private bool reachedDestinationOnLastEpisode = false;
+    private Vector2 previousPosition;
+    
 
     public int GetTotalStepsAcrossEpisodes()
     {
@@ -75,7 +78,10 @@ public class AICar : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        previousPosition = transform.position;
         totalNumberOfStepsTaken++;
+        episodeSteps++;
+
         // Actions: 0 for steering, 1 for acceleration
         float steer = actions.ContinuousActions[0];
         float accel = Mathf.Clamp(actions.ContinuousActions[1], 0f, 1f);
@@ -85,6 +91,18 @@ public class AICar : Agent
         transform.Rotate(0, 0, -steer * turnSpeed * Time.deltaTime);
 
         // Reward System
+
+        // needs max time (steps?) per episode
+        if (episodeSteps >= 1000)
+        {
+            AddReward(-0.5f);
+            Debug.Log("Episode timed out");
+            lastEpisodeReward = GetCumulativeReward();
+            reachedDestinationOnLastEpisode = false;
+            EndEpisode();
+            return;
+        }
+        // needs min motion in window of time (steps?)
         float distanceToTarget = Vector2.Distance(transform.position, target.position);
         AddReward(-0.001f); // Small penalty for each step to encourage efficiency
         if (distanceToTarget < .25f) // If close to the target
@@ -101,7 +119,14 @@ public class AICar : Agent
         {
             visitedNodes.Add(navData.path[currentNavTarget]); // but not for chilling on it
             //reward for progress
-            AddReward(.01f);
+            AddReward(.05f);
+        }
+
+        float prevDistance = Vector2.Distance(previousPosition, navData.path[currentNavTarget]);
+        float currDistance = distanceToNavPoint;
+        if (currDistance < prevDistance - 0.01f) // Only reward meaningful progress
+        {
+            AddReward(0.01f); // Small bonus for moving toward the nav point
         }
         
         if (tilemap == null) {
@@ -111,7 +136,7 @@ public class AICar : Agent
         if (trackCollider != null)
         {
             Debug.Log("Crash");
-            AddReward(-1.0f); // Penalize going out of bounds
+            AddReward(-0.5f); // Penalize going out of bounds
             lastEpisodeReward = GetCumulativeReward();
             reachedDestinationOnLastEpisode = false;
             EndEpisode();
@@ -120,6 +145,7 @@ public class AICar : Agent
 
     public override void OnEpisodeBegin()
     {
+        episodeSteps = 0;
         if (SceneManager.GetActiveScene().name == "90 Degree")
         {
             endAdjuster.MoveTarget(CompletedEpisodes, lastEpisodeReward, reachedDestinationOnLastEpisode);
