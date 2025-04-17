@@ -99,3 +99,8 @@ So far testing the increased vector stack it seems slower, but in a sense more m
 Interesting, it seems like the curves mean more to it now and it gets a little tripped up there at times, but cool to see it not just like cheating the curve. This makes me very excited to get my own transformer as the model.
 
 Ah the end adjuster was too adjusted lol gonna have to step back to an early model and try again.
+
+## April 16
+
+O it has been too long. I was able to get on and work for a little a few weeks ago and then again tonight I was able to just get started on how to connect my own python training code to the simulation. I figure I can keep tweaking with ML agents or I can start to learn myself and tweak my own training code and learn from being in it where I really want to be. So, yes I am jumping in here!
+
